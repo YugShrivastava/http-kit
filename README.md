@@ -8,7 +8,7 @@ A lightweight toolkit of HTTP and API utilities for rapid backend prototyping.
 
 - Rapid backend and API prototyping  
 - Type-safe request validation with Zod  
-- Authentication powered by Better Auth  
+- Authentication powered by Clerk  
 - Database access via Prisma ORM  
 - SQLite database for fast local development  
 - Modern UI with Tailwind CSS and shadcn/ui  
@@ -21,7 +21,7 @@ A lightweight toolkit of HTTP and API utilities for rapid backend prototyping.
 
 - **Framework**: Next.js 16.1.4
 - **Language**: TypeScript  
-- **Authentication**: Better Auth  
+- **Authentication**: Clerk
 - **ORM**: Prisma  
 - **Database**: SQLite  
 - **UI Components**: shadcn/ui  
@@ -43,26 +43,26 @@ Create a `.env` file in the project root:
 
 ```env
 # database
-DATABASE_URL="file:./dev.db"                                        # url to sqlite db
+DATABASE_URL="file:./dev.db"                                                    # url to sqlite db
 
-# better-auth
-BETTER_AUTH_SECRET=entropy_in_software_is_inevitable___~sun_tzu     # auth secret
-BETTER_AUTH_URL=http://localhost:3000                               # base url of the app
+# clerk
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=                                              # clerk publishable key
+CLERK_SECRET_KEY=entropy_in_software_is_inevitable                              # clerk secret
 
 # public
 NEXT_PUBLIC_APP_URL=http://localhost:3000
+```
+
+### Run database migrations
+
+```bash
+npx prisma migrate dev --name init
 ```
 
 ### Generate Prisma client
 
 ```bash
 npx prisma generate
-```
-
-### Run database migrations
-
-```bash
-npx prisma migrate dev
 ```
 
 ### Run tests
