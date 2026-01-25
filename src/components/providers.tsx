@@ -1,23 +1,36 @@
 "use client";
 
-import { ThemeProvider as NextThemesProvider } from "next-themes";
+import { ThemeProvider as NextThemesProvider, useTheme } from "next-themes";
+import { Navbar } from "./navbar";
+import { ClerkProvider } from "@clerk/nextjs";
+import { dark } from "@clerk/themes";
 
-function ThemeProvider({
-  children,
-  ...props
-}: React.ComponentProps<typeof NextThemesProvider>) {
-  return <NextThemesProvider {...props}>{children}</NextThemesProvider>;
+function ClerkWithTheme({ children }: { children: React.ReactNode }) {
+  const { resolvedTheme } = useTheme();
+  if (!resolvedTheme) return <ClerkProvider>{children}</ClerkProvider>;
+  return (
+    <ClerkProvider
+      appearance={{ baseTheme: resolvedTheme === "dark" ? dark : undefined }}
+    >
+      {children}
+    </ClerkProvider>
+  );
 }
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
-    <ThemeProvider
+    <NextThemesProvider
       attribute="class"
       defaultTheme="system"
       enableSystem
       disableTransitionOnChange
     >
-      {children}
-    </ThemeProvider>
+      <ClerkWithTheme>
+        <>
+          <Navbar />
+          <main className="w-full flex-1">{children}</main>
+        </>
+      </ClerkWithTheme>
+    </NextThemesProvider>
   );
 }
