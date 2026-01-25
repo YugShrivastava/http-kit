@@ -1,9 +1,9 @@
 import {
-    SignedIn,
-    SignedOut,
-    SignInButton,
-    SignUpButton,
-    UserButton,
+  SignedIn,
+  SignedOut,
+  SignInButton,
+  SignUpButton,
+  UserButton,
 } from "@clerk/nextjs";
 import { Github } from "lucide-react";
 import Link from "next/link";
@@ -11,10 +11,10 @@ import { ThemeSwitcher } from "./theme-switcher";
 import { usePathname } from "next/navigation";
 
 export function Navbar() {
-  const pathname = usePathname()
+  const pathname = usePathname();
   const apiDashboardActive = pathname.includes("api-dashboard");
   const requestBinActive = pathname.includes("request-bin");
-  
+
   return (
     <nav className="w-full py-5 flex gap-10 justify-between items-center dark:text-zinc-400 text-zinc-500">
       <div className="flex justify-center items-center gap-2">
@@ -40,8 +40,12 @@ export function Navbar() {
           >
             Home
           </Link>
-          <SignInButton mode="modal" />
-          <SignUpButton mode="modal" />
+          <div className="px-4 py-2 dark:hover:border-zinc-b-600/50 border hover:border-b-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 border-transparent rounded cursor-pointer transition-colors">
+            <SignInButton mode="modal" />
+          </div>
+          <div className="px-4 py-2 dark:hover:border-zinc-b-600/50 border hover:border-b-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 border-transparent rounded cursor-pointer transition-colors">
+            <SignUpButton mode="modal" />
+          </div>
         </SignedOut>
       </div>
       <div className="flex justify-center items-center gap-4">

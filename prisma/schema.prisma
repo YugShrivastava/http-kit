@@ -9,3 +9,17 @@ generator client {
 datasource db {
   provider = "sqlite"
 }
+
+model User {
+  id    String @id
+  token String @unique @default(nanoid(21))
+  api   Api[]
+}
+
+model Api {
+  id     String @id @default(cuid())
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+  apiId  String @unique @default(nanoid(6))
+  data   String
+}
