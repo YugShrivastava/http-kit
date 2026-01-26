@@ -7,7 +7,11 @@ const isProtectedRoute = createRouteMatcher([
   "/request-bin(.*)",
 ]);
 
-const isApiRoute = createRouteMatcher(["/api/(.*)"]);
+const isApiRoute = createRouteMatcher([
+  "/api/mock/(.*)",
+  "/api",
+  "/api/bin/(.*)",
+]);
 
 export default clerkMiddleware(async (auth, req: NextRequest) => {
   const { isAuthenticated, userId } = await auth();
@@ -27,11 +31,11 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
   }
 
   if (isProtectedRoute(req)) await auth.protect();
-  
+
   if (!isApiRoute(req)) {
-    console.log("here")
-    return NextResponse.next()
-  };
+    console.log("here");
+    return NextResponse.next();
+  }
 
   const headers = req.headers;
   const authHeader = headers.get("Authorization");
@@ -66,7 +70,15 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
       },
     });
 
-  NextResponse.next();
+  const newHeaders = new Headers(req.headers);
+
+  newHeaders.set("token", token);
+
+  return NextResponse.next({
+    request: {
+      headers: newHeaders,
+    },
+  });
 });
 
 export const config = {
