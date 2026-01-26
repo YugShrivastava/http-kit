@@ -32,7 +32,6 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
   if (isProtectedRoute(req)) await auth.protect();
 
   if (!isApiRoute(req)) {
-    console.log("here");
     return NextResponse.next();
   }
 
