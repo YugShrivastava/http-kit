@@ -10,7 +10,6 @@ const isProtectedRoute = createRouteMatcher([
 const isApiRoute = createRouteMatcher([
   "/api/mock/(.*)",
   "/api",
-  "/api/bin/(.*)",
 ]);
 
 export default clerkMiddleware(async (auth, req: NextRequest) => {

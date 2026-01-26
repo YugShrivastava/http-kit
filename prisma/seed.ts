@@ -1,18 +1,17 @@
-import { Api } from "@/generated/prisma/client";
 import prisma from "@/lib/db";
 
-async function main () {
-  console.warn("no seed data");
+async function main() {
+  console.warn("\nThis seed file will clear the entire database.");
+  console.warn("Clearing process will start in 3 seconds.\n")
   
-  const api = {
-    data: "{\n  working: \"yes\",\n  virgin: \"yes\",\n  gay: \"no\",\n  curr_fav_pornstar: \"ashley anderson\"\n}",
-    userId: "user_38kOmbUyAdVk1hYCQ3s0gLzZGEW"
-  }
+  await (new Promise(res => setTimeout(res, 3000)))
   
-  await prisma.api.create({
-    data: api
-  })
+  await prisma.requestLog.deleteMany()
+  await prisma.api.deleteMany()
+  await prisma.bin.deleteMany()
+  await prisma.user.deleteMany()
   
+  console.log("\nDatabase cleared.")
 }
 
 main()

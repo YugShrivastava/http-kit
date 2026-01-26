@@ -1,282 +1,74 @@
-import prisma from "@/lib/db";
-import { NextRequest, NextResponse } from "next/server";
+import prisma from "@/lib/db"
+import { NextRequest, NextResponse } from "next/server"
 
-export async function GET(req: NextRequest) {
-  const token = req.headers.get("token");
-  if (!token)
-    return new NextResponse(
-      JSON.stringify({
-        error: "token not found",
-      }),
-      {
-        status: 401,
-        headers: {
-          "Content-Type": "application/json",
-        },
-      },
-    );
+async function getApiFromRequest(req: NextRequest) {
+  const token = req.headers.get("token")
+  if (!token) {
+    return {
+      error: NextResponse.json(
+        { error: "token not found" },
+        { status: 401 }
+      ),
+    }
+  }
 
   const user = await prisma.user.findUnique({
-    where: {
-      token,
-    },
-    include: {
-      api: true,
-    },
-  });
+    where: { token },
+    include: { apis: true },
+  })
 
-  if (!user)
-    return new NextResponse(
-      JSON.stringify({
-        error: "invalid token",
-      }),
-    );
+  if (!user) {
+    return {
+      error: NextResponse.json(
+        { error: "invalid token" },
+        { status: 401 }
+      ),
+    }
+  }
 
-  const apiId = req.url.split("/").at(-1);
+  const url = new URL(req.url)
+  const apiId = url.pathname.split("/").at(-1)
 
-  const api = user.api.find((api) => api.apiId === apiId);
+  if (!apiId) {
+    return {
+      error: NextResponse.json(
+        { error: "invalid api id" },
+        { status: 400 }
+      ),
+    }
+  }
 
-  if (!api)
-    return new NextResponse(
-      JSON.stringify({
-        error: "invalid api id",
-      }),
-      {
-        status: 400,
-        headers: {
-          "Content-Type": "application/json",
-        },
-      },
-    );
+  const api = user.apis.find((api) => api.apiId === apiId)
 
-  return new NextResponse(api.data, {
+  if (!api) {
+    return {
+      error: NextResponse.json(
+        { error: "invalid api id" },
+        { status: 400 }
+      ),
+    }
+  }
+
+  return { api }
+}
+
+async function handler(req: NextRequest) {
+  const result = await getApiFromRequest(req)
+
+  if ("error" in result) {
+    return result.error
+  }
+
+  return new NextResponse(result.api.data, {
     status: 200,
     headers: {
       "Content-Type": "application/json",
     },
-  });
+  })
 }
 
-export async function POST(req: NextRequest) {
-  const token = req.headers.get("token");
-  if (!token)
-    return new NextResponse(
-      JSON.stringify({
-        error: "token not found",
-      }),
-      {
-        status: 401,
-        headers: {
-          "Content-Type": "application/json",
-        },
-      },
-    );
-
-  const user = await prisma.user.findUnique({
-    where: {
-      token,
-    },
-    include: {
-      api: true,
-    },
-  });
-
-  if (!user)
-    return new NextResponse(
-      JSON.stringify({
-        error: "invalid token",
-      }),
-    );
-
-  const apiId = req.url.split("/").at(-1);
-
-  const api = user.api.find((api) => api.apiId === apiId);
-
-  if (!api)
-    return new NextResponse(
-      JSON.stringify({
-        error: "invalid api id",
-      }),
-      {
-        status: 400,
-        headers: {
-          "Content-Type": "application/json",
-        },
-      },
-    );
-
-  return new NextResponse(api.data, {
-    status: 200,
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-}
-
-export async function PUT(req: NextRequest) {
-  const token = req.headers.get("token");
-  if (!token)
-    return new NextResponse(
-      JSON.stringify({
-        error: "token not found",
-      }),
-      {
-        status: 401,
-        headers: {
-          "Content-Type": "application/json",
-        },
-      },
-    );
-
-  const user = await prisma.user.findUnique({
-    where: {
-      token,
-    },
-    include: {
-      api: true,
-    },
-  });
-
-  if (!user)
-    return new NextResponse(
-      JSON.stringify({
-        error: "invalid token",
-      }),
-    );
-
-  const apiId = req.url.split("/").at(-1);
-
-  const api = user.api.find((api) => api.apiId === apiId);
-
-  if (!api)
-    return new NextResponse(
-      JSON.stringify({
-        error: "invalid api id",
-      }),
-      {
-        status: 400,
-        headers: {
-          "Content-Type": "application/json",
-        },
-      },
-    );
-
-  return new NextResponse(api.data, {
-    status: 200,
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-}
-
-export async function PATCH(req: NextRequest) {
-  const token = req.headers.get("token");
-  if (!token)
-    return new NextResponse(
-      JSON.stringify({
-        error: "token not found",
-      }),
-      {
-        status: 401,
-        headers: {
-          "Content-Type": "application/json",
-        },
-      },
-    );
-
-  const user = await prisma.user.findUnique({
-    where: {
-      token,
-    },
-    include: {
-      api: true,
-    },
-  });
-
-  if (!user)
-    return new NextResponse(
-      JSON.stringify({
-        error: "invalid token",
-      }),
-    );
-
-  const apiId = req.url.split("/").at(-1);
-
-  const api = user.api.find((api) => api.apiId === apiId);
-
-  if (!api)
-    return new NextResponse(
-      JSON.stringify({
-        error: "invalid api id",
-      }),
-      {
-        status: 400,
-        headers: {
-          "Content-Type": "application/json",
-        },
-      },
-    );
-
-  return new NextResponse(api.data, {
-    status: 200,
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-}
-
-export async function DELETE(req: NextRequest) {
-  const token = req.headers.get("token");
-  if (!token)
-    return new NextResponse(
-      JSON.stringify({
-        error: "token not found",
-      }),
-      {
-        status: 401,
-        headers: {
-          "Content-Type": "application/json",
-        },
-      },
-    );
-
-  const user = await prisma.user.findUnique({
-    where: {
-      token,
-    },
-    include: {
-      api: true,
-    },
-  });
-
-  if (!user)
-    return new NextResponse(
-      JSON.stringify({
-        error: "invalid token",
-      }),
-    );
-
-  const apiId = req.url.split("/").at(-1);
-
-  const api = user.api.find((api) => api.apiId === apiId);
-
-  if (!api)
-    return new NextResponse(
-      JSON.stringify({
-        error: "invalid api id",
-      }),
-      {
-        status: 400,
-        headers: {
-          "Content-Type": "application/json",
-        },
-      },
-    );
-
-  return new NextResponse(api.data, {
-    status: 200,
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-}
+export const GET = handler
+export const POST = handler
+export const PUT = handler
+export const PATCH = handler
+export const DELETE = handler
