@@ -37,12 +37,18 @@ export async function updateMockApi(userId: string, formData: FormData) {
 
   if (!exists) return { error: "user not found" };
 
-  await prisma.api.update({
-    where: { apiId: api.apiId },
-    data: {
-      data: api.data,
-    },
-  });
+  try {
+    await prisma.api.update({
+      where: { apiId: api.apiId },
+      data: {
+        data: api.data,
+      },
+    });
+    
+  } catch (e) {
+    console.log(e);
+    return { error: "server error" };
+  }
 
   return { error: false };
 }
@@ -58,9 +64,13 @@ export async function deleteMockApi(userId: string, formData: FormData) {
 
   if (!exists) return { error: "user not found" };
 
-  await prisma.api.delete({
-    where: { apiId },
-  });
-
+  try {
+    await prisma.api.delete({
+      where: { apiId },
+    });
+  } catch (e) {
+    console.log(e);
+    return { error: "server error" };
+  }
   return { error: false };
 }

@@ -1,20 +1,20 @@
 "use client"
 
-import { useUser } from "@clerk/nextjs";
-import { createMockApi } from "@/actions/api-actions";
+import { deleteRequestLog } from "@/actions/bin-actions";
 import { Button } from "@/components/ui/button";
 
-export function Form() {
-  const { user } = useUser();
+export function Form() {  
   const action = async (formData: FormData) => {
-    if (!user) return;
-    formData.set("returnData", JSON.stringify({
-      data: "mock",
-      asli: true
-    }))
-    const res = await createMockApi(user.id, formData);
+    formData.set("binId", "BTqgPv");
+    formData.set("id", "cmkwofw3c00067v0hqezd978x");
+    //user_38lcQObbiza9MZJwIX9PL08FsEw
+    const userId = "user_38lcQObbiza9MZJwIX9PL08FsEw";
+    
+    
+    const res = await deleteRequestLog(userId, formData);
+    console.log(res);
   }
-
+  
   return (
     <>
       {" "}

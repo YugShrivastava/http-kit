@@ -26,19 +26,19 @@ model Api {
 }
 
 model Bin {
-  id      String       @id @default(cuid())
-  user    User         @relation(fields: [userId], references: [id])
-  userId  String
-  binId   String       @unique @default(nanoid(6))
-  reqLogs RequestLog[]
+  id     String       @id @default(cuid())
+  user   User         @relation(fields: [userId], references: [id])
+  userId String
+  binId  String       @unique @default(nanoid(6))
+  logs   RequestLog[]
 }
 
 model RequestLog {
-  id        String   @id @default(cuid())
-  bin       Bin      @relation(fields: [binId], references: [binId])
+  id        String    @id @default(cuid())
+  bin       Bin       @relation(fields: [binId], references: [binId], onDelete: Cascade)
   binId     String
   method    String
-  timestamp DateTime @default(now())
+  timestamp DateTime  @default(now())
   headers   String
   body      String
   query     String
